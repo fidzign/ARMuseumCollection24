@@ -9,7 +9,7 @@ import {
 	RGBEFormat,
 	RGBFormat,
 	UnsignedByteType
-} from "../../../build/three.module.js";
+} from "../../build/three.module.js";
 
 //from "../../../build/three.module.js";
 
