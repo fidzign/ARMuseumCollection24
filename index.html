@@ -128,15 +128,15 @@
 
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.001, 100 );
 
-				var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
-				directionalLight.position.set(0, 0, 1).normalize();
+				var directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
+				directionalLight.position.set(0, 0, 5).normalize();
 				scene.add(directionalLight);
 
 
 				//0x222222
 
-				//var ambientLight = new THREE.AmbientLight(0x222222);
-				//scene.add(ambientLight);
+				var ambientLight = new THREE.AmbientLight(0x222222);
+				scene.add(ambientLight);
 
 				//
 
