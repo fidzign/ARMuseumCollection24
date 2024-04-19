@@ -19,7 +19,7 @@
 	
 			<div id="container" style="position: fixed;"></div>
 			  
-			<span style="font-size:30px;cursor:pointer;position: absolute;" onclick="openNav()">&#9776; open</span>
+			<span style="font-size:30px;cursor:pointer;position: absolute;" onclick="openNav()">&#9776; Collections</span>
 		
 			<button type="button" id="place-button">PLACE</button>
 		</div>
@@ -38,7 +38,7 @@
 
 			import * as THREE from './build/three.module.js';
 			import { ARButton } from './jsm/webxr/ARButton.js';
-			import { VRButton } from './jsm/webxr/VRButton.js';
+			//import { VRButton } from './jsm/webxr/VRButton.js';
 			//
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
@@ -70,10 +70,10 @@
 				isAR = true;
 			});
 
-			$("#VRButton").click(function(){
+			/*$("#VRButton").click(function(){
 				scene.background = envmap;
 				scene.position.z = -2;
-			});
+			});*/
 
 			$("#place-button").click(function(){
 				arPlace();
@@ -126,14 +126,17 @@
 				scene = new THREE.Scene();
 				window.scene = scene;
 
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.001, 200 );
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.001, 100 );
 
-				var directionalLight = new THREE.DirectionalLight(0xdddddd, 1);
+				var directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
 				directionalLight.position.set(0, 0, 1).normalize();
 				scene.add(directionalLight);
 
-				var ambientLight = new THREE.AmbientLight(0x222222);
-				scene.add(ambientLight);
+
+				//0x222222
+
+				//var ambientLight = new THREE.AmbientLight(0x222222);
+				//scene.add(ambientLight);
 
 				//
 
@@ -155,7 +158,7 @@
 				controls.dampingFactor = 0.05;
 
 				//VR SETUP
-				document.body.appendChild(VRButton.createButton(renderer));
+				//document.body.appendChild(VRButton.createButton(renderer));
 
 				//AR SETUP
 
