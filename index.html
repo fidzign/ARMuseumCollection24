@@ -94,7 +94,7 @@
 
 						envmap = pmremGenerator.fromEquirectangular(texture).texture;
 
-						scene.environment = envmap;
+						scene.environment = texture;
 						texture.dispose();
 						pmremGenerator.dispose();
 						render();
@@ -109,7 +109,7 @@
 
 							var box = new THREE.Box3();
 							box.setFromObject(current_object);
-							box.getCenter(controls.target);
+							box.center(controls.target);
 
 							controls.update();
 							render();
