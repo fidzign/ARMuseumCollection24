@@ -43,7 +43,7 @@
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from './jsm/loaders/RGBELoader.js';
-			//import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
+			import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
 
 			var container;
 			var camera, scene, renderer;
@@ -162,11 +162,16 @@
 				var ambientLight = new THREE.AmbientLight(0x222222);
 				scene.add(ambientLight);
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
+
+			
+			
+
+				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.toneMapping = THREE.ACESFilmicToneMapping;
 				renderer.toneMappingExposure = 1;
+				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
 				pmremGenerator = new THREE.PMREMGenerator(renderer);
