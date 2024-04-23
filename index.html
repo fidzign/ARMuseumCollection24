@@ -129,25 +129,17 @@
 
 				// LIGHTS
 
-				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1);
-				hemiLight.color.setHSL( 0.6, 0.6, 0.8 );
-				hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-				hemiLight.position.set( 0, 0, 2 );
-				scene.add( hemiLight );
+				const dirLight = new THREE.DirectionalLight( 0xffffff, 3 );
+				dirLight.position.set( - 3, 10, - 10 );
+				dirLight.castShadow = true;
+				dirLight.shadow.camera.top = 2;
+				dirLight.shadow.camera.bottom = - 2;
+				dirLight.shadow.camera.left = - 2;
+				dirLight.shadow.camera.right = 2;
+				dirLight.shadow.camera.near = 0.1;
+				dirLight.shadow.camera.far = 40;
+				scene.add( dirLight );
 
-				const dirLight1 = new THREE.DirectionalLight( 0xffffff, 2);
-				dirLight1.color.setHSL( 0.1, 1, 0.95 );
-				dirLight1.position.set( 0, 10, 1 );
-				dirLight1.position.multiplyScalar( 30 );
-				dirLight1.castShadow = true;
-				scene.add( dirLight1 );
-
-				const dirLight2 = new THREE.DirectionalLight( 0xffffff, 2 );
-				dirLight2.color.setHSL( 0.1, 1, 0.95 );
-				dirLight2.position.set( 0, 10, -1 );
-				dirLight2.position.multiplyScalar( 30 );
-				dirLight2.castShadow = true;
-				scene.add( dirLight2 );
 
 				var ambientLight = new THREE.AmbientLight(0x222222);
 				scene.add(ambientLight);
