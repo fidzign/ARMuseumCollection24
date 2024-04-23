@@ -91,11 +91,11 @@
 				new RGBELoader()
 					.setDataType(THREE.UnsignedByteType)
 					.setPath('textures/')
-					.load('photo_studio_01_1k.hdr', function(texture){
+					.load('harvest_1k.hdr', function(texture){
 
 						envmap = pmremGenerator.fromEquirectangular(texture).texture;
 
-						scene.environment = texture;
+						scene.environment = envmap;
 						texture.dispose();
 						pmremGenerator.dispose();
 						render();
