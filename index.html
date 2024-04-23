@@ -71,7 +71,7 @@
 			});
 
 			$("#VRButton").click(function(){
-				scene.background = envmap;
+				//scene.background = envmap;
 				scene.position.z = -2;
 			});
 
@@ -130,38 +130,28 @@
 
 				// LIGHTS
 
-				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2);
+				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1);
 				hemiLight.color.setHSL( 0.6, 0.6, 0.8 );
 				hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
 				hemiLight.position.set( 0, 0, 2 );
 				scene.add( hemiLight );
 
-				const dirLight1 = new THREE.DirectionalLight( 0xffffff, 6 );
+				const dirLight1 = new THREE.DirectionalLight( 0xffffff, 2);
 				dirLight1.color.setHSL( 0.1, 1, 0.95 );
-				dirLight1.position.set( 0, 1.75, 1 );
+				dirLight1.position.set( 0, 10, 1 );
 				dirLight1.position.multiplyScalar( 30 );
 				dirLight1.castShadow = true;
 				scene.add( dirLight1 );
 
-				const dirLight2 = new THREE.DirectionalLight( 0xffffff, 6 );
+				const dirLight2 = new THREE.DirectionalLight( 0xffffff, 2 );
 				dirLight2.color.setHSL( 0.1, 1, 0.95 );
-				dirLight2.position.set( 0, 1.75, -1 );
+				dirLight2.position.set( 0, 10, -1 );
 				dirLight2.position.multiplyScalar( 30 );
 				dirLight2.castShadow = true;
 				scene.add( dirLight2 );
 
-
 				var ambientLight = new THREE.AmbientLight(0x222222);
 				scene.add(ambientLight);
-
-				// renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
-				// renderer.setPixelRatio( window.devicePixelRatio );
-				// renderer.setSize( window.innerWidth, window.innerHeight );
-				// renderer.toneMapping = THREE.ACESFilmicToneMapping;
-				// renderer.toneMappingExposure = 1;
-				// renderer.xr.enabled = true;
-				// container.appendChild( renderer.domElement );
-
 
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -256,17 +246,14 @@
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
-
 			}
 
 			//
 
 			function animate() {
-
 				renderer.setAnimationLoop( render );
 				requestAnimationFrame(animate);
 				controls.update();
-
 			}
 
 			function render( timestamp, frame ) {
@@ -292,15 +279,11 @@
 
 							hitTestSourceRequested = false;
 							hitTestSource = null;
-
 							isAR = false;
-
 							reticle.visible = false;
-
 							var box = new THREE.Box3();
 							box.setFromObject(current_object);
 							box.center(controls.target);
-
 							document.getElementById("place-button").style.display = "none";
 
 						} );
