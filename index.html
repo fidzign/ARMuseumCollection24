@@ -37,14 +37,20 @@
 		<script type="module">
 
 			import * as THREE from './build/three.module.js';
+
+			import WebGPU from './jsm/capabilities/WebGPU.js';
+			import WebGL from './jsm/capabilities/WebGL.js';
+
 			import { ARButton } from './jsm/webxr/ARButton.js';
 			//import { VRButton } from './jsm/webxr/VRButton.js';
-			//
+
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from './jsm/loaders/RGBELoader.js';
 			import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
 
+			import { GUI } from './jsm/libs/lil-gui.module.min.js';
+			
 			var container;
 			var camera, scene, renderer;
 			var controller;
@@ -118,8 +124,14 @@
 							box.setFromObject(current_object);
 							box.getCenter(controls.target);
 
+
+							const gui = new GUI();
+							gui.add( object.material, 'sheen', 0, 1 );
+							gui.open();
+
 							controls.update();
 							render();
+
 						});
 					});
 			}
@@ -138,9 +150,9 @@
 				// LIGHTS
 
 				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2);
-				hemiLight.color.setHSL( 0.6, 0.6, 0.65 );
+				hemiLight.color.setHSL( 0.6, 0.6, 0.8 );
 				hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-				hemiLight.position.set( 0, 0, 100 );
+				hemiLight.position.set( 0, 0, 2 );
 				scene.add( hemiLight );
 
 				const dirLight1 = new THREE.DirectionalLight( 0xffffff, 6 );
@@ -157,14 +169,18 @@
 				dirLight2.castShadow = true;
 				scene.add( dirLight2 );
 
-	
 
 				var ambientLight = new THREE.AmbientLight(0x222222);
 				scene.add(ambientLight);
 
+				// renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+				// renderer.setPixelRatio( window.devicePixelRatio );
+				// renderer.setSize( window.innerWidth, window.innerHeight );
+				// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+				// renderer.toneMappingExposure = 1;
+				// renderer.xr.enabled = true;
+				// container.appendChild( renderer.domElement );
 
-			
-			
 
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -184,9 +200,6 @@
 				controls.target.set(0, 0, -0.2);
 				controls.enableDamping = true;
 				controls.dampingFactor = 0.05;
-
-				//VR SETUP
-				//document.body.appendChild(VRButton.createButton(renderer));
 
 				//AR SETUP
 
@@ -213,7 +226,7 @@
 
 				//
 
-				window.addEventListener( 'resize', onWindowResize, false );
+				window.addEventListener( 'resize', onWindowResize);
 
 				renderer.domElement.addEventListener('touchstart', function(e){
 					e.preventDefault();
@@ -259,17 +272,14 @@
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
-
 			}
 
 			//
 
 			function animate() {
-
 				renderer.setAnimationLoop( render );
 				requestAnimationFrame(animate);
 				controls.update();
-
 			}
 
 			function render( timestamp, frame ) {
