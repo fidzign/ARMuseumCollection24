@@ -49222,7 +49222,7 @@ Object.assign( Box3.prototype, {
 
 	center: function ( optionalTarget ) {
 
-		console.warn( 'THREE.Box3: .center() has been renamed to .getCenter().' );
+		console.warn( 'THREE.Box3: .getCenter() has been renamed to .getCenter().' );
 		return this.getCenter( optionalTarget );
 
 	},
