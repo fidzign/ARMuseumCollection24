@@ -54,7 +54,7 @@ body {
 
   #back-button{
     position: absolute;
-    top: 0px;
+    top: 400px;
     left: calc(50% - 50px);
     width: 100px;
     height: 30px;
