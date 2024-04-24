@@ -105,6 +105,8 @@
 				if ( reticle.visible ) {
 					current_object.position.setFromMatrixPosition(reticle.matrix);
 					current_object.visible = true;
+					document.getElementById("back-button").style.display = "none";
+
 				}
 			}
 
@@ -234,8 +236,6 @@
 
 				document.body.appendChild( ARButton.createButton(renderer, options));
 
-
-				document.getElementById("back-button").style.display = "none";
 
 				//document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
 
