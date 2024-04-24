@@ -112,14 +112,7 @@
 
 			function backMenu(){
 
-							hitTestSourceRequested = false;
-							hitTestSource = null;
-							isAR = false;
-							reticle.visible = false;
-							var box = new THREE.Box3();
-							box.setFromObject(current_object);
-							box.center(controls.target);
-							//document.getElementById("place-button").style.display = "none";
+				window.location.reload();
 
 			}
 
@@ -404,7 +397,7 @@
 							box.setFromObject(current_object);
 							box.center(controls.target);
 							document.getElementById("place-button").style.display = "none";
-							//document.getElementById("back-button").style.display = "none";
+							document.getElementById("back-button").style.display = "none";
 
 						} );
 
