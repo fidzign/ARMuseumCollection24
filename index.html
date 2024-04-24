@@ -278,7 +278,7 @@
 
 				}, false);
 
-				//createPanel();
+				createPanel();
 				animate();
 
 			}
@@ -400,7 +400,7 @@
 							box.setFromObject(current_object);
 							box.center(controls.target);
 							document.getElementById("place-button").style.display = "none";
-							document.getElementById("back-button").style.display = "none";
+							//document.getElementById("back-button").style.display = "none";
 
 						} );
 
@@ -417,7 +417,7 @@
 							var hit = hitTestResults[ 0 ];
 
 							document.getElementById("place-button").style.display = "block";
-							document.getElementById("back-button").style.display = "block";
+							//document.getElementById("back-button").style.display = "block";
 
 							reticle.visible = true;
 							reticle.matrix.fromArray( hit.getPose( referenceSpace ).transform.matrix );
