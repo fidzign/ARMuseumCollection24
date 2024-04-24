@@ -43,24 +43,43 @@
 			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from './jsm/loaders/RGBELoader.js';
 			import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
+			import Stats from './jsm/libs/stats.module.js';
+			import { GUI } from './jsm/libs/lil-gui.module.min.js';
 
-			var container;
-			var camera, scene, renderer;
+
+			let container;
+			let camera, scene, renderer;
 			var controller;
 
-			var reticle, pmremGenerator, current_object, controls, isAR, envmap;
+			let reticle, pmremGenerator, current_object, controls, isAR, envmap;
 
-			var hitTestSource = null;
-			var hitTestSourceRequested = false;
+			let hitTestSource = null;
+			let hitTestSourceRequested = false;
+
+			const crossFadeControls = [];
+
+			let currentBaseAction = 'idle';
+			const allActions = [];
+			const baseActions = {
+				idle: { weight: 1 },
+				walk: { weight: 0 },
+				run: { weight: 0 }
+			};
+			const additiveActions = {
+				sneak_pose: { weight: 0 },
+				sad_pose: { weight: 0 },
+				agree: { weight: 0 },
+				headShake: { weight: 0 }
+			};
+			let panelSettings, numAnimations;
 
 			init();
-			animate();
+			
 
 			$(".ar-object").click(function(){
 				if(current_object != null){
 					scene.remove(current_object);
 				}
-
 				loadModel($(this).attr("id"));
 			});
 
@@ -129,11 +148,11 @@
 
 				// LIGHTS
 
-				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1);
-				hemiLight.color.setHSL( 0.6, 0.6, 0.8 );
-				hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-				hemiLight.position.set( 0, 0, 2 );
-				scene.add( hemiLight );
+				// const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1);
+				// hemiLight.color.setHSL( 0.6, 0.6, 0.8 );
+				// hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+				// hemiLight.position.set( 0, 0, 2 );
+				// scene.add( hemiLight );
 
 				const dirLight1 = new THREE.DirectionalLight( 0xffffff, 2);
 				dirLight1.color.setHSL( 0.1, 1, 0.95 );
@@ -153,9 +172,29 @@
 				var ambientLight = new THREE.AmbientLight(0x222222);
 				scene.add(ambientLight);
 
+
+				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x8d8d8d, 3 );
+				hemiLight.position.set( 0, 20, 0 );
+				scene.add( hemiLight );
+
+				const dirLight = new THREE.DirectionalLight( 0xffffff, 3 );
+				dirLight.position.set( 3, 10, 10 );
+				dirLight.castShadow = true;
+				dirLight.shadow.camera.top = 2;
+				dirLight.shadow.camera.bottom = - 2;
+				dirLight.shadow.camera.left = - 2;
+				dirLight.shadow.camera.right = 2;
+				dirLight.shadow.camera.near = 0.1;
+				dirLight.shadow.camera.far = 40;
+				scene.add( dirLight );
+
+				
+				//SETUP RENDER
+
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
 				renderer.toneMapping = THREE.ACESFilmicToneMapping;
 				renderer.toneMappingExposure = 1;
 				renderer.xr.enabled = true;
@@ -230,7 +269,74 @@
 
 				}, false);
 
+				createPanel();
+				animate();
+
 			}
+
+			function createPanel() {
+
+				const panel = new GUI( { width: 310 } );
+
+				const folder1 = panel.addFolder( 'Actions' );
+				// const folder2 = panel.addFolder( 'Additive Action Weights' );
+				// const folder3 = panel.addFolder( 'General Speed' );
+
+				panelSettings = {
+					'modify time scale': 1.0
+				};
+
+				const baseNames = [ 'None', ...Object.keys( baseActions ) ];
+
+				for ( let i = 1, l = baseNames.length; i !== l; ++ i ) {
+
+					const name = baseNames[ i ];
+					const settings = baseActions[ name ];
+					panelSettings[ name ] = function () {
+
+						const currentSettings = baseActions[ currentBaseAction ];
+						const currentAction = currentSettings ? currentSettings.action : null;
+						const action = settings ? settings.action : null;
+
+						if ( currentAction !== action ) {
+
+							prepareCrossFade( currentAction, action, 0.35 );
+
+						}
+
+					};
+
+					crossFadeControls.push( folder1.add( panelSettings, name ) );
+
+				}
+
+
+				crossFadeControls.forEach( function ( control ) {
+
+					control.setInactive = function () {
+
+						control.domElement.classList.add( 'control-inactive' );
+
+					};
+
+					control.setActive = function () {
+
+						control.domElement.classList.remove( 'control-inactive' );
+
+					};
+
+					const settings = baseActions[ control.property ];
+
+					if ( ! settings || ! settings.weight ) {
+
+						control.setInactive();
+
+					}
+
+				} );
+
+			}
+
 
 			var touchDown, touchX, touchY, deltaX, deltaY;
 
