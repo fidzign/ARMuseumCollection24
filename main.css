@@ -53,12 +53,7 @@ body {
   }
 
   #back-button{
-    position: absolute;
-    top: 10px;
-    left: calc(50% - 50px);
-    width: 100px;
-    height: 30px;
-    display: none;
+    margin-bottom: 70px !important;
   }
 
   #VRButton{
