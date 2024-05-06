@@ -58,20 +58,20 @@
 
 			const crossFadeControls = [];
 
-			let currentBaseAction = 'idle';
-			const allActions = [];
-			const baseActions = {
-				idle: { weight: 1 },
-				walk: { weight: 0 },
-				run: { weight: 0 }
-			};
-			const additiveActions = {
-				sneak_pose: { weight: 0 },
-				sad_pose: { weight: 0 },
-				agree: { weight: 0 },
-				headShake: { weight: 0 }
-			};
-			let panelSettings, numAnimations;
+			// let currentBaseAction = 'idle';
+			// const allActions = [];
+			// const baseActions = {
+			// 	idle: { weight: 1 },
+			// 	walk: { weight: 0 },
+			// 	run: { weight: 0 }
+			// };
+			// const additiveActions = {
+			// 	sneak_pose: { weight: 0 },
+			// 	sad_pose: { weight: 0 },
+			// 	agree: { weight: 0 },
+			// 	headShake: { weight: 0 }
+			// };
+			// let panelSettings, numAnimations;
 
 			init();
 			
@@ -142,11 +142,11 @@
 							arPlace();
 							
 
-							var box = new THREE.Box3();
-							box.setFromObject(current_object);
-							box.center(controls.target);
+							// var box = new THREE.Box3();
+							// box.setFromObject(current_object);
+							// box.center(controls.target);
 
-							controls.update();
+							// controls.update();
 							render();
 						});
 					});
@@ -278,7 +278,7 @@
 
 				}, false);
 
-				createPanel();
+				//createPanel();
 				animate();
 
 			}
