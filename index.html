@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>AR Demo | AK47 </title>
+		<title>Museum Geologi | AR Collections </title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link type="text/css" rel="stylesheet" href="main.css">
@@ -12,21 +12,21 @@
 		<div id="content">
 			<div id="mySidenav" class="sidenav">
 				<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-				<a class="ar-object" id="1" href="#">AK 47</a>
-				<!-- <a class="ar-object" id="2" href="#">Homo Sapiens</a>
-				<a class="ar-object" id="3" href="#">Tridagna</a> -->
+				<a class="ar-object" id="1" href="#">Gajah Blora</a>
+				<a class="ar-object" id="2" href="#">Homo Sapiens</a>
+				<a class="ar-object" id="3" href="#">Tridagna</a>
 			</div>
-
+	
 			<div id="container" style="position: fixed;"></div>
 			  
-			<span style="font-size:14px;cursor:pointer;position: absolute;" onclick="openNav()">&#9776; Weapon Collections</span>
+			<span style="font-size:14px;cursor:pointer;position: absolute;" onclick="openNav()">&#9776; Open Collections</span>
+		
 			<button type="button" id="place-button">PLACE</button>
-			<button type="button" id="back-button">BACK</button>
 		</div>
 
 		<script>
 			function openNav() {
-			  document.getElementById("mySidenav").style.width = "180px";
+			  document.getElementById("mySidenav").style.width = "250px";
 			}
 			function closeNav() {
 			  document.getElementById("mySidenav").style.width = "0";
@@ -36,50 +36,35 @@
 		<script type="module">
 
 			import * as THREE from './build/three.module.js';
+
 			import { ARButton } from './jsm/webxr/ARButton.js';
 			import { VRButton } from './jsm/webxr/VRButton.js';
 			//
+			import Stats from './jsm/libs/stats.module.js';
+			import { GUI } from './jsm/libs/lil-gui.module.min.js';
+
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from './jsm/loaders/RGBELoader.js';
 			import { RoughnessMipmapper } from './jsm/utils/RoughnessMipmapper.js';
-			import Stats from './jsm/libs/stats.module.js';
-			import { GUI } from './jsm/libs/lil-gui.module.min.js';
 
-
-			let container;
-			let camera, scene, renderer;
+			var container;
+			var camera, scene, renderer;
 			var controller;
 
-			let reticle, pmremGenerator, current_object, controls, isAR, envmap;
+			var reticle, pmremGenerator, current_object, controls, isAR, envmap;
 
-			let hitTestSource = null;
-			let hitTestSourceRequested = false;
-
-			const crossFadeControls = [];
-
-			// let currentBaseAction = 'idle';
-			// const allActions = [];
-			// const baseActions = {
-			// 	idle: { weight: 1 },
-			// 	walk: { weight: 0 },
-			// 	run: { weight: 0 }
-			// };
-			// const additiveActions = {
-			// 	sneak_pose: { weight: 0 },
-			// 	sad_pose: { weight: 0 },
-			// 	agree: { weight: 0 },
-			// 	headShake: { weight: 0 }
-			// };
-			// let panelSettings, numAnimations;
+			var hitTestSource = null;
+			var hitTestSourceRequested = false;
 
 			init();
-			
+			animate();
 
 			$(".ar-object").click(function(){
 				if(current_object != null){
 					scene.remove(current_object);
 				}
+
 				loadModel($(this).attr("id"));
 			});
 
@@ -97,26 +82,11 @@
 				arPlace();
 			});
 
-			$("#back-button").click(function(){
-				backMenu();
-			});
-
 			function arPlace(){
 				if ( reticle.visible ) {
 					current_object.position.setFromMatrixPosition(reticle.matrix);
 					current_object.visible = true;
-					//document.getElementById("back-button").style.display = "none";
-
 				}
-			}
-
-			function backMenu(){
-
-				hitTestSourceRequested = false;
-				hitTestSource = null;
-				isAR = false;
-				window.addEventListener( 'resize', onWindowResize, true );
-
 			}
 
 			function loadModel(model){
@@ -140,16 +110,30 @@
 							scene.add(current_object);
 
 							arPlace();
-							
 
-							// var box = new THREE.Box3();
-							// box.setFromObject(current_object);
-							// box.center(controls.target);
+							var box = new THREE.Box3();
+							box.setFromObject(current_object);
+							box.center(controls.target);
 
-							// controls.update();
+							controls.update();
 							render();
 						});
 					});
+			}
+
+			function createPanel(){
+
+				const panel = new GUI( { width: 310 } );
+
+				const folder1 = panel.addFolder( 'Base Actions' );
+				const folder2 = panel.addFolder( 'Additive Action Weights' );
+				const folder3 = panel.addFolder( 'General Speed' );
+
+				panelSettings = {
+					'modify time scale': 1.0
+				};
+
+
 			}
 
 			function init() {
@@ -164,7 +148,6 @@
 
 				// LIGHTS
 
-				
 				const dirLight1 = new THREE.DirectionalLight( 0xffffff, 2);
 				dirLight1.color.setHSL( 0.1, 1, 0.95 );
 				dirLight1.position.set( 0, 10, 1 );
@@ -197,11 +180,11 @@
 				dirLight.shadow.camera.far = 40;
 				scene.add( dirLight );
 
-				//SETUP RENDER
-
 				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.toneMapping = THREE.ACESFilmicToneMapping;
+				renderer.toneMappingExposure = 1;
 				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
@@ -210,14 +193,14 @@
 
 				controls = new OrbitControls(camera, renderer.domElement);
 				controls.addEventListener('change', render);
-				controls.minDistance = 8;
-				controls.maxDistance = 40;
-				controls.target.set(-0.2, 0, -0.2);
+				controls.minDistance = 2;
+				controls.maxDistance = 10;
+				controls.target.set(0, 0, -0.2);
 				controls.enableDamping = true;
 				controls.dampingFactor = 0.05;
 
 				//VR SETUP
-				//document.body.appendChild(VRButton.createButton(renderer));
+				document.body.appendChild(VRButton.createButton(renderer));
 
 				//AR SETUP
 
@@ -229,7 +212,6 @@
 				options.domOverlay = { root: document.getElementById('content')};
 
 				document.body.appendChild( ARButton.createButton(renderer, options));
-
 
 				//document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
 
@@ -275,74 +257,7 @@
 
 				}, false);
 
-				//createPanel();
-				animate();
-
 			}
-
-			function createPanel() {
-
-				const panel = new GUI( { width: 310 } );
-
-				const folder1 = panel.addFolder( 'Actions' );
-				// const folder2 = panel.addFolder( 'Additive Action Weights' );
-				// const folder3 = panel.addFolder( 'General Speed' );
-
-				panelSettings = {
-					'modify time scale': 1.0
-				};
-
-				const baseNames = [ 'None', ...Object.keys( baseActions ) ];
-
-				for ( let i = 1, l = baseNames.length; i !== l; ++ i ) {
-
-					const name = baseNames[ i ];
-					const settings = baseActions[ name ];
-					panelSettings[ name ] = function () {
-
-						const currentSettings = baseActions[ currentBaseAction ];
-						const currentAction = currentSettings ? currentSettings.action : null;
-						const action = settings ? settings.action : null;
-
-						if ( currentAction !== action ) {
-
-							prepareCrossFade( currentAction, action, 0.35 );
-
-						}
-
-					};
-
-					crossFadeControls.push( folder1.add( panelSettings, name ) );
-
-				}
-
-
-				crossFadeControls.forEach( function ( control ) {
-
-					control.setInactive = function () {
-
-						control.domElement.classList.add( 'control-inactive' );
-
-					};
-
-					control.setActive = function () {
-
-						control.domElement.classList.remove( 'control-inactive' );
-
-					};
-
-					const settings = baseActions[ control.property ];
-
-					if ( ! settings || ! settings.weight ) {
-
-						control.setInactive();
-
-					}
-
-				} );
-
-			}
-
 
 			var touchDown, touchX, touchY, deltaX, deltaY;
 
@@ -397,7 +312,6 @@
 							box.setFromObject(current_object);
 							box.center(controls.target);
 							document.getElementById("place-button").style.display = "none";
-							//document.getElementById("back-button").style.display = "none";
 
 						} );
 
@@ -414,7 +328,6 @@
 							var hit = hitTestResults[ 0 ];
 
 							document.getElementById("place-button").style.display = "block";
-							//document.getElementById("back-button").style.display = "block";
 
 							reticle.visible = true;
 							reticle.matrix.fromArray( hit.getPose( referenceSpace ).transform.matrix );
@@ -424,7 +337,6 @@
 							reticle.visible = false;
 
 							document.getElementById("place-button").style.display = "none";
-							//document.getElementById("back-button").style.display = "none";
 
 						}
 
